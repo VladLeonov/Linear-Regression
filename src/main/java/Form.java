@@ -6,10 +6,14 @@ public class Form  extends JFrame {
 
     private JPanel mainPanel;
     private ArrayList<Data> dataSet = new ArrayList<>();
+    private double areaFactor = 0.01, roomsFactor = 1, priceFactor = 0.00001;
 
     private Form() {
 
         dataSet = Data.loadDataSet(System.getProperty("user.dir") + "/src/main/res/prices.txt");
+        for (int i = 0; i < dataSet.size(); i++) {
+            dataSet.set(i, Data.normalize(dataSet.get(i), areaFactor, roomsFactor, priceFactor));
+        }
 
         adjustDisplay();
     }

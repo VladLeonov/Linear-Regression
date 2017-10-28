@@ -14,7 +14,7 @@ public class Data {
         this.price = price;
     }
 
-    static public ArrayList<Data> loadDataSet(String fileName) {
+    public static ArrayList<Data> loadDataSet(String fileName) {
 
         double area, rooms, price;
         ArrayList<Data> dataSet = new ArrayList<>();
@@ -34,5 +34,12 @@ public class Data {
         }
 
         return dataSet;
+    }
+
+    public static Data normalize(Data data,double areaFactor, double roomsFactor, double priceFactor) {
+
+        return new Data(data.area * areaFactor,
+        data.rooms * roomsFactor,
+        data.price * priceFactor);
     }
 }
