@@ -39,8 +39,8 @@ public class Form  extends JFrame {
 
         calculateForNewDataButton.addActionListener(e -> {
 
-            Data data = new Data(Double.parseDouble(areaTextField.getText()),
-                    Double.parseDouble(roomsTextField.getText()),0);
+            Data data = new Data(Double.parseDouble(areaTextField.getText()) * areaFactor,
+                    Double.parseDouble(roomsTextField.getText()) * roomsFactor,0);
             resultLabel.setText("<html>Price by Standard Deviation = " +
                     MyMath.getPrice(data, gradientDescentWeights) / priceFactor + "<br>" +
                     "Price by Standard Deviation = " +
