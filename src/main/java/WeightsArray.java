@@ -1,11 +1,11 @@
 
 public class WeightsArray {
 
-    double areaWeight, roomsWeight, priceWeight;
+    double areaWeight, roomsWeight, freeWeight;
 
-    public WeightsArray(double areaWeight, double roomsWeight, double priceWeight) {
+    public WeightsArray(double areaWeight, double roomsWeight, double freeWeight) {
         this.areaWeight = areaWeight;
         this.roomsWeight = roomsWeight;
-        this.priceWeight = priceWeight;
+        this.freeWeight = freeWeight;
     }
 }
