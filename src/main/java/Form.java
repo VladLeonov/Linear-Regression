@@ -42,9 +42,9 @@ public class Form  extends JFrame {
             Data data = new Data(Double.parseDouble(areaTextField.getText()),
                     Double.parseDouble(roomsTextField.getText()),0);
             resultLabel.setText("<html>Price by Standard Deviation = " +
-                    MyMath.getPrice(data, gradientDescentWeights) + "<br>" +
+                    MyMath.getPrice(data, gradientDescentWeights) / priceFactor + "<br>" +
                     "Price by Standard Deviation = " +
-                    MyMath.getPrice(data, geneticAlgorithmWeights) + "</html>");
+                    MyMath.getPrice(data, geneticAlgorithmWeights) / priceFactor + "</html>");
         });
     }
 
