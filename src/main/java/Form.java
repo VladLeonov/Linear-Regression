@@ -52,7 +52,7 @@ public class Form  extends JFrame {
     private void adjustDisplay() {
 
         setContentPane(mainPanel);
-        setSize(new Dimension(600, 600));
+        setSize(new Dimension(300, 300));
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("Linear regression");
         setResizable(false);
