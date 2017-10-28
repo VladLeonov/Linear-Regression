@@ -1,11 +1,17 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class Form  extends JFrame {
 
     private JPanel mainPanel;
     private JLabel methodsLabel;
+    private JButton calculateForNewDataButton;
+    private JTextField areaTextField;
+    private JTextField roomsTextField;
+    private JLabel resultLabel;
     private ArrayList<Data> dataSet = new ArrayList<>();
     private double areaFactor = 0.01, roomsFactor = 1, priceFactor = 0.00001;
     private WeightsArray gradientDescentWeights, geneticAlgorithmWeights;
@@ -17,8 +23,8 @@ public class Form  extends JFrame {
             dataSet.set(i, Data.normalize(dataSet.get(i), areaFactor, roomsFactor, priceFactor));
         }
 
-        gradientDescentWeights = new WeightsArray(0, 0, 0);//TODO
-        geneticAlgorithmWeights = new WeightsArray(0, 0, 0);//TODO
+        gradientDescentWeights = new WeightsArray(1, 1, 1);//TODO
+        geneticAlgorithmWeights = new WeightsArray(1, 1, 1);//TODO
 
         methodsLabel.setText("<html>Gradient Descent:<br>Weights: " +
                 gradientDescentWeights.toString() + "<br>" +
@@ -30,6 +36,16 @@ public class Form  extends JFrame {
                 MyMath.getStandardDeviation(dataSet, geneticAlgorithmWeights) + "</html>");
 
         adjustDisplay();
+
+        calculateForNewDataButton.addActionListener(e -> {
+
+            Data data = new Data(Double.parseDouble(areaTextField.getText()),
+                    Double.parseDouble(roomsTextField.getText()),0);
+            resultLabel.setText("<html>Price by Standard Deviation = " +
+                    MyMath.getPrice(data, gradientDescentWeights) + "<br>" +
+                    "Price by Standard Deviation = " +
+                    MyMath.getPrice(data, geneticAlgorithmWeights) + "</html>");
+        });
     }
 
 
