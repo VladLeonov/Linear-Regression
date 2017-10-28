@@ -8,4 +8,9 @@ public class WeightsArray {
         this.roomsWeight = roomsWeight;
         this.freeWeight = freeWeight;
     }
+
+    @Override
+    public String toString() {
+        return new String(areaWeight + " " + roomsWeight + " " + freeWeight);
+    }
 }
