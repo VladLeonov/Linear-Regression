@@ -11,6 +11,8 @@ class WeightsArray {
 
     @Override
     public String toString() {
-        return areaWeight + " " + roomsWeight + " " + freeWeight;
+        return String.format("%.3f%n", areaWeight) + " " +
+                String.format("%.3f%n", roomsWeight) + " " +
+                String.format("%.3f%n", freeWeight);
     }
 }
