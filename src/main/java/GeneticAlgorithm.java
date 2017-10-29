@@ -17,11 +17,11 @@ class GeneticAlgorithm {
         this.proportionOfMutants = proportionOfMutants;
 
         random = new Random(System.currentTimeMillis());
-        genotypes = new ArrayList<>(numberOfGenotypes);
+        genotypes = new ArrayList<>();
 
-        for (Genotype genotype : genotypes) {
+        for (int i = 0; i < numberOfGenotypes; i++) {
 
-            genotype = new Genotype(10, random, dataSet);
+            genotypes.add(new Genotype(10, random, dataSet));
         }
     }
 
@@ -38,8 +38,8 @@ class GeneticAlgorithm {
 
         for (int i = numberOfGenotypes / 2; i < numberOfGenotypes; i++) {
 
-            genotypes.set(i, new Genotype(genotypes.get(random.nextInt() % (numberOfGenotypes / 2)),
-                    genotypes.get(random.nextInt() % (numberOfGenotypes / 2)),
+            genotypes.set(i, new Genotype(genotypes.get(Math.abs(random.nextInt()) % (numberOfGenotypes / 2)),
+                    genotypes.get(Math.abs(random.nextInt()) % (numberOfGenotypes / 2)),
                     dataSet));
         }
     }
