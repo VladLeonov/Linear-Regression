@@ -3,106 +3,85 @@ import java.util.ArrayList;
 import static java.lang.Math.*;
 
 
-public class GradientDescent {
+class GradientDescent {
 
-    ArrayList<Data> dataSet;
-    double areaWeight, roomsWeight, freeWeight;
-    double oldAreaWeight, oldRoomsWeight, oldFreeWeight;
-    double dAreaWeight, dRoomsWeight, dFreeWeight;
-    double newAreaWeight, newRoomsWeight, newFreeWeight;
-    double step;
+    private ArrayList<Data> dataSet;
 
-    public GradientDescent(ArrayList<Data> dataSet) {
+    GradientDescent(ArrayList<Data> dataSet) {
 
         this.dataSet = dataSet;
-
-        areaWeight = 0;
-        roomsWeight = 0;
-        freeWeight = 0;
-        
-        oldAreaWeight = 10;
-        oldRoomsWeight = 10;
-        oldFreeWeight = 10;
-
-        newAreaWeight = 10;
-        newRoomsWeight = 10;
-        newFreeWeight = 10;
-
-        step = 10;
     }
 
-    public void countDs(ArrayList<Data> dataSet) {
+    private WeightsArray countDs(ArrayList<Data> dataSet, WeightsArray currentWeights) {
 
         int n = dataSet.size();
+
         double sum = 0;
-        Data data;
+        for (Data data : dataSet) {
 
-        for (int i = 0; i < n; i++) {
-
-            data = dataSet.get(i);
-            sum += data.area * (areaWeight * data.area + roomsWeight * data.rooms - data.price);
+            sum += data.area * (currentWeights.areaWeight * data.area + currentWeights.roomsWeight * data.rooms - data.price);
         }
 
-        dAreaWeight = sum * 2 / (1 - n);
+        double dAreaWeight = sum * 2 / (1 - n);
 
-        for (int i = 0; i < n; i++) {
+        sum = 0;
+        for (Data data : dataSet) {
 
-            data = dataSet.get(i);
-            sum += data.rooms * (areaWeight * data.area + roomsWeight * data.rooms - data.price);
+            sum += data.rooms * (currentWeights.areaWeight * data.area + currentWeights.roomsWeight * data.rooms - data.price);
         }
 
-        dRoomsWeight = sum * 2 / (1 - n);
+        double dRoomsWeight = sum * 2 / (1 - n);
 
-        for (int i = 0; i < n; i++) {
+        sum = 0;
+        for (Data data : dataSet) {
 
-            data = dataSet.get(i);
-            sum += freeWeight + areaWeight * data.area + roomsWeight * data.rooms - data.price;
+            sum += currentWeights.freeWeight + currentWeights.areaWeight * data.area + currentWeights.roomsWeight * data.rooms - data.price;
         }
 
-        dFreeWeight = sum * 2 / (1 - n);
+        double dFreeWeight = sum * 2 / (1 - n);
+
+        return new WeightsArray(dAreaWeight, dRoomsWeight, dFreeWeight);
     }
 
 
-    public WeightsArray CountWeights() {
+    WeightsArray CountWeights() {
         
-        WeightsArray weightsArray;
-        WeightsArray oldWeightsArray;
+        WeightsArray currentWeights = new WeightsArray(0, 0, 0);
+        WeightsArray oldWeights = new WeightsArray(10, 10, 10);
+        WeightsArray newWeights = new WeightsArray(10, 10, 10);
+        WeightsArray dWeights;
 
-        int counter = 0;
         double relativeImprovement;
+        double step = 10;
 
         do {
-            countDs(dataSet);
-            while ((areaWeight * newAreaWeight + roomsWeight * newRoomsWeight + freeWeight * newFreeWeight) < 0) {
+            dWeights = countDs(dataSet, currentWeights);
+
+            while ((currentWeights.areaWeight * newWeights.areaWeight +
+                    currentWeights.roomsWeight * newWeights.roomsWeight +
+                    currentWeights.freeWeight * newWeights.freeWeight) < 0) {
 
                 step = step / 1.5;
-                newAreaWeight = areaWeight + step * dAreaWeight;
-                newRoomsWeight = roomsWeight + step * dRoomsWeight;
-                newFreeWeight = freeWeight + step * dFreeWeight;
+                newWeights = new WeightsArray(currentWeights.areaWeight + step * dWeights.areaWeight,
+                        currentWeights.roomsWeight + step * dWeights.roomsWeight,
+                        currentWeights.freeWeight + step * dWeights.freeWeight);//TODO change to method
             }
 
-            oldAreaWeight = areaWeight;
-            oldRoomsWeight = roomsWeight;
-            oldFreeWeight = freeWeight;
-            
-            areaWeight = areaWeight + step * dAreaWeight;
-            roomsWeight = roomsWeight + step * dRoomsWeight;
-            freeWeight = freeWeight + step * dFreeWeight;
+            oldWeights.areaWeight = currentWeights.areaWeight;//TODO change to copying
+            oldWeights.roomsWeight = currentWeights.roomsWeight;
+            oldWeights.freeWeight = currentWeights.freeWeight;
 
-            weightsArray = new WeightsArray(areaWeight, roomsWeight, freeWeight);
-            oldWeightsArray = new WeightsArray(oldAreaWeight, oldRoomsWeight, oldFreeWeight);
+            currentWeights.areaWeight += step * dWeights.areaWeight;//TODO change to method
+            currentWeights.roomsWeight += step * dWeights.roomsWeight;
+            currentWeights.freeWeight += step * dWeights.freeWeight;
 
-            counter++;
+            double oldStandardDeviation = MyMath.getStandardDeviation(dataSet, oldWeights);
+            double currentStandardDeviation = MyMath.getStandardDeviation(dataSet, currentWeights);
+            relativeImprovement = abs(oldStandardDeviation - currentStandardDeviation) / oldStandardDeviation;
 
-            relativeImprovement = abs(MyMath.getStandardDeviation(dataSet, oldWeightsArray) -
-                    MyMath.getStandardDeviation(dataSet, weightsArray)) /
-                    MyMath.getStandardDeviation(dataSet, oldWeightsArray);
+        } while (relativeImprovement > 0);
 
-            System.out.println(relativeImprovement);
-        } while (relativeImprovement > 0.000000000000001);
-
-        System.out.println(counter);
-        return weightsArray;
+        return currentWeights;
     }
 
 }
