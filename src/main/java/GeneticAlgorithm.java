@@ -1,0 +1,59 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
+
+class GeneticAlgorithm {
+
+    private ArrayList<Genotype> genotypes;
+    private ArrayList<Data> dataSet;
+    private Random random;
+    private int numberOfGenotypes;
+    private double proportionOfMutants;
+
+    GeneticAlgorithm(ArrayList<Data> dataSet, int numberOfGenotypes, double proportionOfMutants) {
+
+        this.dataSet = dataSet;
+        this.numberOfGenotypes = numberOfGenotypes;
+        this.proportionOfMutants = proportionOfMutants;
+
+        random = new Random(System.currentTimeMillis());
+        genotypes = new ArrayList<>(numberOfGenotypes);
+
+        for (Genotype genotype : genotypes) {
+
+            genotype = new Genotype(10, random, dataSet);
+        }
+    }
+
+    private void nextIteration() {
+
+        for (Genotype genotype : genotypes) {
+
+            if (random.nextDouble() < proportionOfMutants) {
+                genotype.mutate(random.nextInt() % 3, 0.05, random);
+            }
+        }
+
+        Collections.sort(genotypes);
+
+        for (int i = numberOfGenotypes / 2; i < numberOfGenotypes; i++) {
+
+            genotypes.set(i, new Genotype(genotypes.get(random.nextInt() % (numberOfGenotypes / 2)),
+                    genotypes.get(random.nextInt() % (numberOfGenotypes / 2)),
+                    dataSet));
+        }
+    }
+
+    void work() {
+
+        for (int i = 0; i < 100; i++) {
+            nextIteration();
+        }
+    }
+
+    WeightsArray getBestWeights() {
+
+        Collections.sort(genotypes);
+        return genotypes.get(0).genes;
+    }
+}
