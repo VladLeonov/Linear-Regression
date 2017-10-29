@@ -5,7 +5,7 @@ import static java.lang.Math.*;
 
 public class GradientDescent {
 
-    ArrayList<Data> dataSet2 = new ArrayList<>();
+    ArrayList<Data> dataSet;
     double areaWeight, roomsWeight, freeWeight;
     double oldAreaWeight, oldRoomsWeight, oldFreeWeight;
     double dAreaWeight, dRoomsWeight, dFreeWeight;
@@ -14,7 +14,8 @@ public class GradientDescent {
 
     public GradientDescent(ArrayList<Data> dataSet) {
 
-        dataSet2.addAll(dataSet);
+        this.dataSet = dataSet;
+
         areaWeight = 0;
         roomsWeight = 0;
         freeWeight = 0;
@@ -42,7 +43,7 @@ public class GradientDescent {
             sum += data.area * (areaWeight * data.area + roomsWeight * data.rooms - data.price);
         }
 
-        dAreaWeight = -((2 / (n - 1)) * sum);
+        dAreaWeight = sum * 2 / (1 - n);
 
         for (int i = 0; i < n; i++) {
 
@@ -50,7 +51,7 @@ public class GradientDescent {
             sum += data.rooms * (areaWeight * data.area + roomsWeight * data.rooms - data.price);
         }
 
-        dRoomsWeight = -((2 / (n - 1)) * sum);
+        dRoomsWeight = sum * 2 / (1 - n);
 
         for (int i = 0; i < n; i++) {
 
@@ -58,23 +59,23 @@ public class GradientDescent {
             sum += freeWeight + areaWeight * data.area + roomsWeight * data.rooms - data.price;
         }
 
-        dFreeWeight = -((2 / (n - 1)) * sum);
+        dFreeWeight = sum * 2 / (1 - n);
     }
 
 
     public WeightsArray CountWeights() {
         
-        countDs(dataSet2);
+        WeightsArray weightsArray;
+        WeightsArray oldWeightsArray;
 
-        WeightsArray weightsArray = new WeightsArray(areaWeight, roomsWeight, freeWeight);
-        WeightsArray oldWeightsArray = new WeightsArray(oldAreaWeight, oldRoomsWeight, oldFreeWeight);
+        int counter = 0;
+        double relativeImprovement;
 
-        while ((abs(MyMath.getStandardDeviation(dataSet2, oldWeightsArray) -
-                MyMath.getStandardDeviation(dataSet2, weightsArray)) /
-                MyMath.getStandardDeviation(dataSet2, oldWeightsArray)) < 0.001){
+        do {
+            countDs(dataSet);
             while ((areaWeight * newAreaWeight + roomsWeight * newRoomsWeight + freeWeight * newFreeWeight) < 0) {
 
-                step = step / (1.5);
+                step = step / 1.5;
                 newAreaWeight = areaWeight + step * dAreaWeight;
                 newRoomsWeight = roomsWeight + step * dRoomsWeight;
                 newFreeWeight = freeWeight + step * dFreeWeight;
@@ -89,9 +90,18 @@ public class GradientDescent {
             freeWeight = freeWeight + step * dFreeWeight;
 
             weightsArray = new WeightsArray(areaWeight, roomsWeight, freeWeight);
-            oldWeightsArray = new WeightsArray(newAreaWeight, newRoomsWeight, newFreeWeight);
-        }
+            oldWeightsArray = new WeightsArray(oldAreaWeight, oldRoomsWeight, oldFreeWeight);
 
+            counter++;
+
+            relativeImprovement = abs(MyMath.getStandardDeviation(dataSet, oldWeightsArray) -
+                    MyMath.getStandardDeviation(dataSet, weightsArray)) /
+                    MyMath.getStandardDeviation(dataSet, oldWeightsArray);
+
+            System.out.println(relativeImprovement);
+        } while (relativeImprovement > 0.000000000000001);
+
+        System.out.println(counter);
         return weightsArray;
     }
 
