@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Scanner;
 
-public class Data {
+class Data {
 
     double area, rooms, price;
 
-    public Data(double area, double rooms, double price) {
+    Data(double area, double rooms, double price) {
         this.area = area;
         this.rooms = rooms;
         this.price = price;
     }
 
-    public static ArrayList<Data> loadDataSet(String fileName) {
+    static ArrayList<Data> loadDataSet(String fileName) {
 
         double area, rooms, price;
         ArrayList<Data> dataSet = new ArrayList<>();
@@ -36,7 +36,7 @@ public class Data {
         return dataSet;
     }
 
-    public static Data normalize(Data data,double areaFactor, double roomsFactor, double priceFactor) {
+    static Data normalize(Data data,double areaFactor, double roomsFactor, double priceFactor) {
 
         return new Data(data.area * areaFactor,
         data.rooms * roomsFactor,

@@ -1,9 +1,9 @@
 
-public class WeightsArray {
+class WeightsArray {
 
     double areaWeight, roomsWeight, freeWeight;
 
-    public WeightsArray(double areaWeight, double roomsWeight, double freeWeight) {
+    WeightsArray(double areaWeight, double roomsWeight, double freeWeight) {
         this.areaWeight = areaWeight;
         this.roomsWeight = roomsWeight;
         this.freeWeight = freeWeight;
@@ -11,6 +11,6 @@ public class WeightsArray {
 
     @Override
     public String toString() {
-        return new String(areaWeight + " " + roomsWeight + " " + freeWeight);
+        return areaWeight + " " + roomsWeight + " " + freeWeight;
     }
 }
