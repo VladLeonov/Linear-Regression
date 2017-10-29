@@ -21,7 +21,10 @@ public class Form  extends JFrame {
         }
 
         gradientDescentWeights = new WeightsArray(1, 1, 1);//TODO
-        geneticAlgorithmWeights = new WeightsArray(1, 1, 1);//TODO
+
+        GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(dataSet, 100, 0.2);
+        geneticAlgorithm.work();
+        geneticAlgorithmWeights = geneticAlgorithm.getBestWeights();
 
         methodsLabel.setText("<html>Gradient Descent:<br>Weights: " +
                 gradientDescentWeights.toString() + "<br>" +
