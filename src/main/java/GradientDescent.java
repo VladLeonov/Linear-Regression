@@ -58,9 +58,9 @@ class GradientDescent {
             dWeights = countDs(dataSet, currentWeights);
 
             newWeights = new WeightsArray(currentWeights, dWeights, step);
-            while (WeightsArray.dot(dWeights, countDs(dataSet, newWeights)) < 0) {
+            while (MyMath.getStandardDeviation(dataSet, newWeights) > MyMath.getStandardDeviation(dataSet, currentWeights)) {
 
-                step /= 1.5;
+                step /= 2;
                 newWeights = new WeightsArray(currentWeights, dWeights, step);
             }
 
