@@ -20,7 +20,8 @@ public class Form  extends JFrame {
             dataSet.set(i, Data.normalize(dataSet.get(i), areaFactor, roomsFactor, priceFactor));
         }
 
-        gradientDescentWeights = new WeightsArray(1, 1, 1);//TODO
+        GradientDescent gradientDescent = new GradientDescent(dataSet);
+        gradientDescentWeights = gradientDescent.CountWeights();
 
         GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(dataSet,
                 100, 0.2, 0.1, 10);
