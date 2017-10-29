@@ -29,11 +29,11 @@ public class Form  extends JFrame {
         geneticAlgorithmWeights = geneticAlgorithm.getBestWeights();
 
         methodsLabel.setText("<html>Gradient Descent:<br>Weights: " +
-                gradientDescentWeights.toString() + "<br>" +
+                gradientDescentWeights.toString(areaFactor, roomsFactor, priceFactor) + "<br>" +
                 "Standard Deviation = " +
                 String.format("%.4f%n", MyMath.getStandardDeviation(dataSet, gradientDescentWeights)) + "<br>" +
                 "Genetic Algorithm:<br>Weights: " +
-                geneticAlgorithmWeights.toString() + "<br>" +
+                geneticAlgorithmWeights.toString(areaFactor, roomsFactor, priceFactor) + "<br>" +
                 "Standard Deviation = " +
                 String.format("%.4f%n", MyMath.getStandardDeviation(dataSet, geneticAlgorithmWeights)) + "</html>");
 
