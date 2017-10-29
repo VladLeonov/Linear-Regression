@@ -44,9 +44,9 @@ class GeneticAlgorithm {
         }
     }
 
-    void work() {
+    void work(int workIterations) {
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < workIterations; i++) {
             nextIteration();
         }
     }
