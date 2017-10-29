@@ -4,9 +4,9 @@ import java.util.Random;
 class Genotype  implements Comparable<Genotype> {
 
     WeightsArray genes;
-    ArrayList<Data> dataSet;
+    private ArrayList<Data> dataSet;
 
-    Genotype(ArrayList<Data> dataSet) {
+    private Genotype(ArrayList<Data> dataSet) {
 
         this.dataSet = dataSet;
     }

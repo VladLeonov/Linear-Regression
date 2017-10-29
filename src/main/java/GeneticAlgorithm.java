@@ -10,7 +10,6 @@ class GeneticAlgorithm {
     private int numberOfGenotypes;
     private double proportionOfMutants;
     private double proportionOfScatter;
-    private double genesValueBorder;
 
     GeneticAlgorithm(ArrayList<Data> dataSet, int numberOfGenotypes, double proportionOfMutants, double proportionOfScatter, double genesValueBorder) {
 
@@ -18,7 +17,6 @@ class GeneticAlgorithm {
         this.numberOfGenotypes = numberOfGenotypes;
         this.proportionOfMutants = proportionOfMutants;
         this.proportionOfScatter = proportionOfScatter;
-        this.genesValueBorder = genesValueBorder;
 
         random = new Random(System.currentTimeMillis());
         genotypes = new ArrayList<>();
