@@ -9,19 +9,23 @@ class GeneticAlgorithm {
     private Random random;
     private int numberOfGenotypes;
     private double proportionOfMutants;
+    private double proportionOfScatter;
+    private double genesValueBorder;
 
-    GeneticAlgorithm(ArrayList<Data> dataSet, int numberOfGenotypes, double proportionOfMutants) {
+    GeneticAlgorithm(ArrayList<Data> dataSet, int numberOfGenotypes, double proportionOfMutants, double proportionOfScatter, double genesValueBorder) {
 
         this.dataSet = dataSet;
         this.numberOfGenotypes = numberOfGenotypes;
         this.proportionOfMutants = proportionOfMutants;
+        this.proportionOfScatter = proportionOfScatter;
+        this.genesValueBorder = genesValueBorder;
 
         random = new Random(System.currentTimeMillis());
         genotypes = new ArrayList<>();
 
         for (int i = 0; i < numberOfGenotypes; i++) {
 
-            genotypes.add(new Genotype(10, random, dataSet));
+            genotypes.add(new Genotype(genesValueBorder, random, dataSet));
         }
     }
 
@@ -30,7 +34,7 @@ class GeneticAlgorithm {
         for (Genotype genotype : genotypes) {
 
             if (random.nextDouble() < proportionOfMutants) {
-                genotype.mutate(random.nextInt() % 3, 0.05, random);
+                genotype.mutate(random.nextInt() % 3, proportionOfScatter, random);
             }
         }
 
