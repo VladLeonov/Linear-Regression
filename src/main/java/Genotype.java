@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.Random;
 
-class Genotype {
+class Genotype  implements Comparable<Genotype> {
 
     WeightsArray genes;
     ArrayList<Data> dataSet;
@@ -47,7 +47,8 @@ class Genotype {
         }
     }
 
-    int compareTo(Genotype other) {
+    @Override
+    public int compareTo(Genotype other) {
         return Double.compare(MyMath.getStandardDeviation(dataSet, genes),
                 MyMath.getStandardDeviation(dataSet, other.genes));
     }
