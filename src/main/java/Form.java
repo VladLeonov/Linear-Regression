@@ -1,3 +1,5 @@
+import javafx.util.Pair;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -10,12 +12,14 @@ public class Form  extends JFrame {
     private JTextField areaTextField;
     private JTextField roomsTextField;
     private JLabel resultLabel;
+    private JPanel drawPanel;
     private double areaFactor = 0.01, roomsFactor = 1, priceFactor = 0.00001;
+    ArrayList<Data> dataSet;
     private WeightsArray gradientDescentWeights, geneticAlgorithmWeights;
 
     private Form() {
 
-        ArrayList<Data> dataSet = Data.loadDataSet(System.getProperty("user.dir") + "/src/main/res/prices.txt");
+        dataSet = Data.loadDataSet(System.getProperty("user.dir") + "/src/main/res/prices.txt");
         for (int i = 0; i < dataSet.size(); i++) {
             dataSet.set(i, Data.normalize(dataSet.get(i), areaFactor, roomsFactor, priceFactor));
         }
@@ -47,14 +51,93 @@ public class Form  extends JFrame {
                     Math.round(MyMath.getPrice(data, gradientDescentWeights) / priceFactor) + "<br>" +
                     "Price by Genetic Algorithm = " +
                     Math.round(MyMath.getPrice(data, geneticAlgorithmWeights) / priceFactor) + "</html>");
+
+            drawPlot();
         });
     }
 
+    private void drawPlot() {
+
+        int numberOfRooms = 3;
+
+        Graphics2D g = (Graphics2D) drawPanel.getGraphics();
+        g.setColor(Color.white);
+        g.fillRect(0,0, drawPanel.getWidth(), drawPanel.getHeight());
+
+        double maxArea = 0, maxPrice = 0;
+
+        for (Data data : dataSet) {
+
+            if  (data.rooms == numberOfRooms) {
+                if (data.area > maxArea) {
+                    maxArea = data.area;
+                }
+                if (data.price > maxPrice) {
+                    maxPrice = data.price;
+                }
+            }
+        }
+
+        ArrayList<Pair<Long, Long>> coordinates = new ArrayList<>();
+        for (Data data : dataSet) {
+
+            if  (data.rooms == numberOfRooms) {
+                coordinates.add(new Pair<>(Math.round(data.area / maxArea * drawPanel.getWidth()),
+                        Math.round(data.price / maxPrice * drawPanel.getHeight())));
+            }
+        }
+
+        g.setColor(Color.black);
+        int radius = 3;
+        for (Pair<Long, Long> coordinate : coordinates) {
+
+            g.fillOval(coordinate.getKey().intValue() - radius,
+                    drawPanel.getHeight() - (coordinate.getValue().intValue() - radius),
+                    2 * radius, 2 * radius);
+        }
+
+        g.setColor(Color.red);
+        double startY = numberOfRooms * gradientDescentWeights.roomsWeight + gradientDescentWeights.freeWeight;
+        double endY = maxArea * gradientDescentWeights.areaWeight + startY;
+        g.drawLine(0,
+                drawPanel.getHeight() - (int) Math.round(startY / maxPrice * drawPanel.getHeight()),
+                drawPanel.getWidth(),
+                drawPanel.getHeight() - (int) Math.round(endY / maxPrice * drawPanel.getHeight()));
+
+        g.setColor(Color.green);
+        startY = numberOfRooms * geneticAlgorithmWeights.roomsWeight + geneticAlgorithmWeights.freeWeight;
+        endY = maxArea * geneticAlgorithmWeights.areaWeight + startY;
+        g.drawLine(0,
+                drawPanel.getHeight() - (int) Math.round(startY / maxPrice * drawPanel.getHeight()),
+                drawPanel.getWidth(),
+                drawPanel.getHeight() - (int) Math.round(endY / maxPrice * drawPanel.getHeight()));
+
+        if (roomsTextField.getText().equals(Integer.toString(numberOfRooms))) {
+
+            double area = Double.parseDouble(areaTextField.getText()) * areaFactor;
+            double priceGD = area * gradientDescentWeights.areaWeight +
+                    numberOfRooms * gradientDescentWeights.roomsWeight +
+                    gradientDescentWeights.freeWeight;
+            double priceGA = area * geneticAlgorithmWeights.areaWeight +
+                    numberOfRooms * geneticAlgorithmWeights.roomsWeight +
+                    geneticAlgorithmWeights.freeWeight;
+
+            g.setColor(Color.red);
+            g.fillOval((int) Math.round(area / maxArea * drawPanel.getWidth() - radius),
+                    (int) Math.round(drawPanel.getHeight() - (priceGD / maxPrice * drawPanel.getHeight() + radius)),
+                    2 * radius, 2 * radius);
+
+            g.setColor(Color.green);
+            g.fillOval((int) Math.round(area / maxArea * drawPanel.getWidth() - radius),
+                    (int) Math.round(drawPanel.getHeight() - (priceGA / maxPrice * drawPanel.getHeight() + radius)),
+                    2 * radius, 2 * radius);
+        }
+    }
 
     private void adjustDisplay() {
 
         setContentPane(mainPanel);
-        setSize(new Dimension(300, 300));
+        setSize(new Dimension(600, 350));
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("Linear regression");
         setResizable(false);
