@@ -35,11 +35,11 @@ public class Form  extends JFrame {
         methodsLabel.setText("<html>Gradient Descent:<br>Weights: " +
                 gradientDescentWeights.toString(areaFactor, roomsFactor, priceFactor) + "<br>" +
                 "Standard Deviation = " +
-                String.format("%.4f%n", MyMath.getStandardDeviation(dataSet, gradientDescentWeights)) + "<br>" +
+                String.format("%.4f%n", MyMath.getStandardDeviation(dataSet, gradientDescentWeights) / priceFactor) + "<br>" +
                 "Genetic Algorithm:<br>Weights: " +
                 geneticAlgorithmWeights.toString(areaFactor, roomsFactor, priceFactor) + "<br>" +
                 "Standard Deviation = " +
-                String.format("%.4f%n", MyMath.getStandardDeviation(dataSet, geneticAlgorithmWeights)) + "</html>");
+                String.format("%.4f%n", MyMath.getStandardDeviation(dataSet, geneticAlgorithmWeights) / priceFactor) + "</html>");
 
         adjustDisplay();
 
