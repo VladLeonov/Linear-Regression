@@ -58,17 +58,18 @@ public class Form  extends JFrame {
 
     private void drawPlot() {
 
-        int numberOfRooms = 3;
-
         Graphics2D g = (Graphics2D) drawPanel.getGraphics();
         g.setColor(Color.white);
         g.fillRect(0,0, drawPanel.getWidth(), drawPanel.getHeight());
 
-        double maxArea = 0, maxPrice = 0;
+        double numberOfRooms = Double.parseDouble(roomsTextField.getText());
 
-        for (Data data : dataSet) {
+        if ((numberOfRooms > 0) && (numberOfRooms <= 5)) {
 
-            if  (data.rooms == numberOfRooms) {
+            double maxArea = 0, maxPrice = 0;
+
+            for (Data data : dataSet) {
+
                 if (data.area > maxArea) {
                     maxArea = data.area;
                 }
@@ -76,43 +77,44 @@ public class Form  extends JFrame {
                     maxPrice = data.price;
                 }
             }
-        }
 
-        ArrayList<Pair<Long, Long>> coordinates = new ArrayList<>();
-        for (Data data : dataSet) {
+            maxArea *= 1.1;
+            maxPrice *= 1.1;
 
-            if  (data.rooms == numberOfRooms) {
-                coordinates.add(new Pair<>(Math.round(data.area / maxArea * drawPanel.getWidth()),
-                        Math.round(data.price / maxPrice * drawPanel.getHeight())));
+            ArrayList<Pair<Long, Long>> coordinates = new ArrayList<>();
+            for (Data data : dataSet) {
+
+                if (data.rooms == numberOfRooms) {
+                    coordinates.add(new Pair<>(Math.round(data.area / maxArea * drawPanel.getWidth()),
+                            Math.round(data.price / maxPrice * drawPanel.getHeight())));
+                }
             }
-        }
 
-        g.setColor(Color.black);
-        int radius = 3;
-        for (Pair<Long, Long> coordinate : coordinates) {
+            g.setColor(Color.black);
+            int radius = 3;
+            for (Pair<Long, Long> coordinate : coordinates) {
 
-            g.fillOval(coordinate.getKey().intValue() - radius,
-                    drawPanel.getHeight() - (coordinate.getValue().intValue() - radius),
-                    2 * radius, 2 * radius);
-        }
+                g.fillOval(coordinate.getKey().intValue() - radius,
+                        drawPanel.getHeight() - (coordinate.getValue().intValue() - radius),
+                        2 * radius, 2 * radius);
+            }
 
-        g.setColor(Color.red);
-        double startY = numberOfRooms * gradientDescentWeights.roomsWeight + gradientDescentWeights.freeWeight;
-        double endY = maxArea * gradientDescentWeights.areaWeight + startY;
-        g.drawLine(0,
-                drawPanel.getHeight() - (int) Math.round(startY / maxPrice * drawPanel.getHeight()),
-                drawPanel.getWidth(),
-                drawPanel.getHeight() - (int) Math.round(endY / maxPrice * drawPanel.getHeight()));
+            g.setColor(Color.red);
+            double startY = numberOfRooms * gradientDescentWeights.roomsWeight + gradientDescentWeights.freeWeight;
+            double endY = maxArea * gradientDescentWeights.areaWeight + startY;
+            g.drawLine(0,
+                    drawPanel.getHeight() - (int) Math.round(startY / maxPrice * drawPanel.getHeight()),
+                    drawPanel.getWidth(),
+                    drawPanel.getHeight() - (int) Math.round(endY / maxPrice * drawPanel.getHeight()));
 
-        g.setColor(Color.green);
-        startY = numberOfRooms * geneticAlgorithmWeights.roomsWeight + geneticAlgorithmWeights.freeWeight;
-        endY = maxArea * geneticAlgorithmWeights.areaWeight + startY;
-        g.drawLine(0,
-                drawPanel.getHeight() - (int) Math.round(startY / maxPrice * drawPanel.getHeight()),
-                drawPanel.getWidth(),
-                drawPanel.getHeight() - (int) Math.round(endY / maxPrice * drawPanel.getHeight()));
+            g.setColor(Color.green);
+            startY = numberOfRooms * geneticAlgorithmWeights.roomsWeight + geneticAlgorithmWeights.freeWeight;
+            endY = maxArea * geneticAlgorithmWeights.areaWeight + startY;
+            g.drawLine(0,
+                    drawPanel.getHeight() - (int) Math.round(startY / maxPrice * drawPanel.getHeight()),
+                    drawPanel.getWidth(),
+                    drawPanel.getHeight() - (int) Math.round(endY / maxPrice * drawPanel.getHeight()));
 
-        if (roomsTextField.getText().equals(Integer.toString(numberOfRooms))) {
 
             double area = Double.parseDouble(areaTextField.getText()) * areaFactor;
             double priceGD = area * gradientDescentWeights.areaWeight +
@@ -123,13 +125,13 @@ public class Form  extends JFrame {
                     geneticAlgorithmWeights.freeWeight;
 
             g.setColor(Color.red);
-            g.fillOval((int) Math.round(area / maxArea * drawPanel.getWidth() - radius),
-                    (int) Math.round(drawPanel.getHeight() - (priceGD / maxPrice * drawPanel.getHeight() + radius)),
+            g.fillRect((int) Math.round(area / maxArea * drawPanel.getWidth() - radius),
+                    (int) Math.round(drawPanel.getHeight() - (priceGD / maxPrice * drawPanel.getHeight()) - radius),
                     2 * radius, 2 * radius);
 
             g.setColor(Color.green);
             g.fillOval((int) Math.round(area / maxArea * drawPanel.getWidth() - radius),
-                    (int) Math.round(drawPanel.getHeight() - (priceGA / maxPrice * drawPanel.getHeight() + radius)),
+                    (int) Math.round(drawPanel.getHeight() - (priceGA / maxPrice * drawPanel.getHeight()) - radius),
                     2 * radius, 2 * radius);
         }
     }
