@@ -14,7 +14,7 @@ public class Form  extends JFrame {
     private JLabel resultLabel;
     private JPanel drawPanel;
     private double areaFactor = 0.01, roomsFactor = 1, priceFactor = 0.00001;
-    ArrayList<Data> dataSet;
+    private ArrayList<Data> dataSet;
     private WeightsArray gradientDescentWeights, geneticAlgorithmWeights;
 
     private Form() {

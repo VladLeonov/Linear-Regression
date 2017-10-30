@@ -21,7 +21,7 @@ class WeightsArray {
         this.freeWeight = current.freeWeight + step * gradient.freeWeight;
     }
 
-    public String toString(double areaFactor, double roomsFactor, double priceFactor) {
+    String toString(double areaFactor, double roomsFactor, double priceFactor) {
         return String.format("%.3f%n", areaWeight * areaFactor / priceFactor) + " " +
                 String.format("%.3f%n", roomsWeight * roomsFactor / priceFactor) + " " +
                 String.format("%.3f%n", freeWeight / priceFactor);
