@@ -14,7 +14,7 @@ abstract class MyMath {
             sum += Math.pow(getPrice(data, weightsArray) - data.price, 2);
         }
 
-        return Math.pow(sum / (n - 1), 0.5);
+        return Math.pow(sum / n, 0.5);
     }
 
     static double getPrice(Data data, WeightsArray weightsArray) {

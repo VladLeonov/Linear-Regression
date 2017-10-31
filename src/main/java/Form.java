@@ -1,4 +1,6 @@
 import javafx.util.Pair;
+import org.ejml.data.DMatrixRMaj;
+import org.ejml.simple.SimpleMatrix;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,47 +15,74 @@ public class Form  extends JFrame {
     private JTextField roomsTextField;
     private JLabel resultLabel;
     private JPanel drawPanel;
-    private double areaFactor = 0.01, roomsFactor = 1, priceFactor = 0.00001;
     private ArrayList<Data> dataSet;
+    private Pair<Data, Data> factors;
+    private double priceFactor;
     private WeightsArray gradientDescentWeights, geneticAlgorithmWeights;
 
     private Form() {
 
         dataSet = Data.loadDataSet(System.getProperty("user.dir") + "/src/main/res/prices.txt");
-        for (int i = 0; i < dataSet.size(); i++) {
-            dataSet.set(i, Data.normalize(dataSet.get(i), areaFactor, roomsFactor, priceFactor));
-        }
+        printTrueSolution();
+
+        factors = Data.normalizeData(dataSet);
+        priceFactor = factors.getValue().price;
+
+        final int workIterationsGA = 1000, numberOfGenotypes = 1000;
 
         GradientDescent gradientDescent = new GradientDescent(dataSet);
-        gradientDescentWeights = gradientDescent.CountWeights();
+        gradientDescentWeights = gradientDescent.CountWeights(numberOfGenotypes * workIterationsGA);
 
         GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(dataSet,
-                100, 0.2, 0.1, 10);
-        geneticAlgorithm.work(1000);
+                numberOfGenotypes, 0.2, 0.1, 10);
+        geneticAlgorithm.work(workIterationsGA);
         geneticAlgorithmWeights = geneticAlgorithm.getBestWeights();
 
         methodsLabel.setText("<html>Gradient Descent:<br>Weights: " +
-                gradientDescentWeights.toString(areaFactor, roomsFactor, priceFactor) + "<br>" +
+                gradientDescentWeights.toString() + "<br>" +
                 "Standard Deviation = " +
-                String.format("%.4f%n", MyMath.getStandardDeviation(dataSet, gradientDescentWeights) / priceFactor) + "<br>" +
+                String.format("%.7f%n", MyMath.getStandardDeviation(dataSet, gradientDescentWeights) * priceFactor) + "<br>" +
                 "Genetic Algorithm:<br>Weights: " +
-                geneticAlgorithmWeights.toString(areaFactor, roomsFactor, priceFactor) + "<br>" +
+                geneticAlgorithmWeights.toString() + "<br>" +
                 "Standard Deviation = " +
-                String.format("%.4f%n", MyMath.getStandardDeviation(dataSet, geneticAlgorithmWeights) / priceFactor) + "</html>");
+                String.format("%.7f%n", MyMath.getStandardDeviation(dataSet, geneticAlgorithmWeights) * priceFactor) + "</html>");
 
         adjustDisplay();
 
         calculateForNewDataButton.addActionListener(e -> {
 
-            Data data = new Data(Double.parseDouble(areaTextField.getText()) * areaFactor,
-                    Double.parseDouble(roomsTextField.getText()) * roomsFactor,0);
+            Data data = new Data(Double.parseDouble(areaTextField.getText()),
+                    Double.parseDouble(roomsTextField.getText()),0);
             resultLabel.setText("<html>Price by Standard Deviation = " +
-                    Math.round(MyMath.getPrice(data, gradientDescentWeights) / priceFactor) + "<br>" +
+                    Math.round(MyMath.getPrice(data, gradientDescentWeights) * priceFactor) + "<br>" +
                     "Price by Genetic Algorithm = " +
-                    Math.round(MyMath.getPrice(data, geneticAlgorithmWeights) / priceFactor) + "</html>");
+                    Math.round(MyMath.getPrice(data, geneticAlgorithmWeights) * priceFactor) + "</html>");
 
             drawPlot();
         });
+    }
+
+    private void printTrueSolution() {
+
+        int n = dataSet.size();
+        double[][] dataX = new double[n][];
+        double[][] dataY = new double[n][];
+        for (int i = 0; i < n; i++) {
+
+            dataX[i] = dataSet.get(i).toDoubleArray();
+            dataY[i] = new double[]{dataSet.get(i).price};
+        }
+
+        SimpleMatrix X = new SimpleMatrix(dataX);
+        SimpleMatrix Y = new SimpleMatrix(dataY);
+
+        SimpleMatrix B = (X.transpose().mult(X)).invert().mult(X.transpose()).mult(Y);
+
+        double w1 = B.get(0, 0);
+        double w2 = B.get(1, 0);
+        double w3 = B.get(2, 0);
+        System.out.println(w1 + " " + w2 + " " + w3);
+        System.out.println(MyMath.getStandardDeviation(dataSet, new WeightsArray(w1, w2, w3)));
     }
 
     private void drawPlot() {
@@ -62,9 +91,9 @@ public class Form  extends JFrame {
         g.setColor(Color.white);
         g.fillRect(0,0, drawPanel.getWidth(), drawPanel.getHeight());
 
-        double numberOfRooms = Double.parseDouble(roomsTextField.getText());
+        double numberOfRooms = (Double.parseDouble(roomsTextField.getText()) - factors.getKey().rooms) / factors.getValue().rooms;
 
-        if ((numberOfRooms > 0) && (numberOfRooms <= 5)) {
+        if ((numberOfRooms >= 0) && (numberOfRooms <= 1)) {
 
             double maxArea = 0, maxPrice = 0;
 
@@ -77,9 +106,6 @@ public class Form  extends JFrame {
                     maxPrice = data.price;
                 }
             }
-
-            maxArea *= 1.1;
-            maxPrice *= 1.1;
 
             ArrayList<Pair<Long, Long>> coordinates = new ArrayList<>();
             for (Data data : dataSet) {
@@ -116,7 +142,7 @@ public class Form  extends JFrame {
                     drawPanel.getHeight() - (int) Math.round(endY / maxPrice * drawPanel.getHeight()));
 
 
-            double area = Double.parseDouble(areaTextField.getText()) * areaFactor;
+            double area = (Double.parseDouble(areaTextField.getText()) - factors.getKey().area) / factors.getValue().area;
             double priceGD = area * gradientDescentWeights.areaWeight +
                     numberOfRooms * gradientDescentWeights.roomsWeight +
                     gradientDescentWeights.freeWeight;
