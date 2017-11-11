@@ -1,7 +1,5 @@
 import java.util.ArrayList;
 
-import static java.lang.Math.*;
-
 
 class GradientDescent {
 
@@ -13,8 +11,6 @@ class GradientDescent {
     }
 
     private WeightsArray countDs(ArrayList<Data> dataSet, WeightsArray currentWeights) {
-
-        int n = dataSet.size();
 
         double sum = 0;
         for (Data data : dataSet) {

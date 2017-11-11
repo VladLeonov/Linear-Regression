@@ -1,5 +1,4 @@
 import javafx.util.Pair;
-import org.ejml.data.DMatrixRMaj;
 import org.ejml.simple.SimpleMatrix;
 
 import javax.swing.*;
@@ -28,7 +27,7 @@ public class Form  extends JFrame {
         factors = Data.normalizeData(dataSet);
         priceFactor = factors.getValue().price;
 
-        final int workIterationsGA = 1000, numberOfGenotypes = 1000;
+        final int workIterationsGA = 100, numberOfGenotypes = 100;
 
         GradientDescent gradientDescent = new GradientDescent(dataSet);
         gradientDescentWeights = gradientDescent.CountWeights(numberOfGenotypes * workIterationsGA);
